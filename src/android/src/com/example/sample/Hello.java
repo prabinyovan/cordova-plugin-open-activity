@@ -12,57 +12,27 @@ import com.example.sample.MainActivity;
 
 public class Hello extends CordovaPlugin
 {
-    private static final String TAG   = "CustomPlugin";
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+		if (action.equals("open")) {
+				try {
+					openN();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else {
+			}
+			return true;
+	}
+	private void openN() throws IOException {
 
-    private CallbackContext callbackContext = null;
-    private MainActivity activity = null;
+		intent = new Intent(this.cordova.getActivity().getApplicationContext(), MainActivity.class);
 
-    /** 
-     * Override the plugin initialise method and set the Activity as an 
-     * instance variable.
-     */
-    @Override
-    public void initialize(CordovaInterface cordova, CordovaWebView webView) 
-    {
-        super.initialize(cordova, webView);
+		this.cordova.getActivity().startActivityForResult(intent,0);
+		this.cordova.getActivity().startActivity(intent);
+		this.cordova.getActivity().overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+	}
 
-        // Set the Activity.
-        this.activity = (MainActivity) cordova.getActivity();
-    }
-
-    /**
-     * Here you can delegate any JavaScript methods. The "action" argument will contain the
-     * name of the delegated method and the "args" will contain any arguments passed from the
-     * JavaScript method.
-     */
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext)
-    {
-        this.callbackContext = callbackContext;
-
-        Log.d(TAG, callbackContext.getCallbackId() + ": " + action);
-
-        if (action.equals("greet")) 
-        {
-        	try{
-        		String message = this.callNativeMethod();
-            	callbackContext.success(message);
-    			return true;
-        	}catch(Exception ex){
-        		callbackContext.error(ex.toString());
-    			return false;
-        	}
-        	
-        }
-        else
-        {
-            return false;
-        }
-
-    }
-
-    private String callNativeMethod()
-    {
-        // Here we simply call the method from the Activity.
-    	return this.activity.GetSomeString();
-    }
+	}
 }
